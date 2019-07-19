@@ -6,7 +6,7 @@ CC = g++
 INCLUDE =
 LIBS = -lm
 
-all: hello_world basic_datatypes conditionals for_loop input_sum menu tweakLetters
+all: hello_world basic_datatypes conditionals for_loop input_sum menu tweakLetters rpg_framework
 .PHONY: all
 
 hello_world: hello_world.cpp
@@ -30,8 +30,11 @@ menu: menu.cpp
 tweakLetters: tweakLetters.cpp
 	$(CC) $(CFLAGS) $? $(LDFLAGS) -o $@
 
+rpg_framework: rpg_framework.cpp rpg_framework.h
+	$(CC) $(CFLAGS) $? $(LDFLAGS) -o $@
+
 clean:
-	-rm -f *.o core *.core hello_world basic_datatypes conditionals for_loop input_sum menu tweakLetters
+	-rm -f *.o core *.core hello_world basic_datatypes conditionals for_loop input_sum menu tweakLetters rpg_framework
 
 .cpp.o:
 	${CC} ${CFLAGS} ${INCLUDES} -c $<
