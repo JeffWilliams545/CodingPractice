@@ -13,19 +13,19 @@ class GameEngine
 	private:
 		std::vector<Player> playerList;
 		std::vector<Enemy> enemyList;
+		void attack( Player &primary, Enemy &secondary );
+		int generateRandomInt( int high );
 	public:
 		void addPlayer( Player &player );
-		void addEnemy( Enemy &enemy ); 
-		void attack( CharBase &primary, CharBase &secondary );
-		void combat( CharBase &primary, CharBase &secondary );
-		int generateRandomInt( int high );
+		void addEnemy( Enemy &enemy );
+		void combat( Player &primary, Enemy &secondary );
 };
 
 class CharBase
 {
 	protected:
 		int hp, atk, def, xp, lvl;
-		std::string name, victoryQuote;
+		std::string name, victoryQuote, defeatQuote;
 	public:
 		void setHP( int hp );
 		void setAtk( int atk );
@@ -34,6 +34,8 @@ class CharBase
 		void setXP( int xp );
 		void setName( std::string name );
 		void setVictoryQuote( std::string victoryQuote );
+		void setDefeatQuote( std::string defeatQuote );
+
 		int getHP();
 		int getAtk();
 		int getDef();
@@ -41,16 +43,21 @@ class CharBase
 		int getXP();
 		std::string getName();
 		std::string getVictoryQuote();
+		std::string getDefeatQuote();
 
-		void load( std::string name, int hp, int atk, int def, int xp, int lvl, std::string victoryQuote );
+		void load( std::string name, int hp, int atk, int def, int xp, int lvl, std::string victoryQuote, std::string defeatQuote );
 		bool isDead();
+};
+
+class Player: public CharBase
+{
+	public:
 		void lvlUp();
-		void victory( CharBase &enemy );
-		void defeat();
+		void victory( Enemy &enemy );
+		void defeat( Enemy &enemy );
 };
 
-class Player: public CharBase{
-};
+class Enemy: public CharBase
+{
 
-class Enemy: public CharBase{
 };

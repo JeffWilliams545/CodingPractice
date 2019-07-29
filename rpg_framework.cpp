@@ -10,9 +10,9 @@ int main( int argc, char* argv[] )
 	srand( time( 0 ) );
 	GameEngine rpg;
 	Player jeff;
-	jeff.load( string( "Jeff" ), 5, 2, 1, 1, 0, string( "get rekt" ) );
+	jeff.load( string( "Jeff" ), 10, 2, 1, 1, 0, string( "Get rekt." ), string( "Oof owch owie my bones." ) );
 	Enemy ruby;
-	ruby.load( string( "Ruby" ), 3, 1, 1, 1, 0, string( "Bark. Ball?" ) );
+	ruby.load( string( "Ruby" ), 5, 2, 1, 1, 1, string( "Bark. Ball?" ), string( "AwhoooOOoooOOoooOo!" ) );
 	rpg.addPlayer( jeff );
 	rpg.addEnemy( ruby );
 	rpg.combat( jeff, ruby );
@@ -29,14 +29,14 @@ void GameEngine::addEnemy( Enemy &enemy )
 	enemyList.push_back( enemy );
 }
 
-void GameEngine::attack( CharBase &primary, CharBase &secondary )
+void GameEngine::attack( Player &primary, Enemy &secondary )
 {
 	if( primary.isDead() )
 	{
-		primary.defeat();
+		primary.defeat( secondary );
 		return;
 	}	
-	int dmg = max( 0, primary.getAtk() - secondary.getDef() );
+	int dmg = max( 1, primary.getAtk() - secondary.getDef() );
 	secondary.setHP( secondary.getHP() - dmg );
 	cout << primary.getName() << " attacked " << secondary.getName() << " and dealt " << dmg << " damage!" << endl;
 	if ( secondary.isDead() )
@@ -44,12 +44,12 @@ void GameEngine::attack( CharBase &primary, CharBase &secondary )
 		primary.victory( secondary );
 		return;
 	}
-	dmg = max( 0, secondary.getAtk() - primary.getDef() );
+	dmg = max( 1, secondary.getAtk() - primary.getDef() );
 	primary.setHP( primary.getHP() - dmg );
 	cout << secondary.getName() << " attacked " << primary.getName() << " and dealt " << dmg << " damage!" << endl;
 }
 
-void GameEngine::combat( CharBase &primary, CharBase &secondary )
+void GameEngine::combat( Player &primary, Enemy &secondary )
 {
   	int turnCount = 0;
   	while ( !primary.isDead() && !secondary.isDead() )
@@ -64,7 +64,6 @@ int GameEngine::generateRandomInt( int high )
 {
 	return ( rand() % high ) + 1;
 }
-
 
 
 void CharBase::setHP( int hp )
@@ -102,6 +101,11 @@ void CharBase::setVictoryQuote( string victoryQuote )
 	this->victoryQuote = victoryQuote;
 }
 
+void CharBase::setDefeatQuote( string defeatQuote )
+{
+	this->defeatQuote = defeatQuote;
+}
+
 int CharBase::getHP()
 {
 	return hp;
@@ -137,7 +141,12 @@ string CharBase::getVictoryQuote()
 	return victoryQuote;
 }
 
-void CharBase::load( string name, int hp, int atk, int def, int lvl, int xp, string victoryQuote )
+string CharBase::getDefeatQuote()
+{
+	return defeatQuote;
+}
+
+void CharBase::load( string name, int hp, int atk, int def, int lvl, int xp, string victoryQuote, string defeatQuote )
 {
 	this->name = name;
 	this->hp = hp;
@@ -146,6 +155,7 @@ void CharBase::load( string name, int hp, int atk, int def, int lvl, int xp, str
 	this->lvl = lvl;
 	this->xp = xp;
 	this->victoryQuote = victoryQuote;
+	this->defeatQuote = defeatQuote;
 }
 
 bool CharBase::isDead()
@@ -156,19 +166,31 @@ bool CharBase::isDead()
 		return false;
 }
 
-void CharBase::victory( CharBase &enemy )
+void Player::victory( Enemy &enemy )
 {
-	cout << name << " has defeated " << enemy.getName() << '!' << endl << victoryQuote << endl << endl;
+	cout << name << " has defeated " << enemy.getName() << '!' << endl;
+	cout << name << ": " << victoryQuote << endl;
+	cout << enemy.getName() << ": " << defeatQuote << endl;
 	setXP( getXP() + enemy.getXP() );
 	lvlUp();
 }
 
-void CharBase::defeat()
+void Player::defeat( Enemy &enemy )
 {
-	cout << name << " has died!" << endl << "GAME OVER" << endl << endl;
+	cout << name << " has died to " << enemy.getName() << '.' << endl;
+	cout << enemy.getName() << ": " << enemy.getVictoryQuote() << endl;
+	cout << name << ": " << defeatQuote << endl << "GAME OVER" << endl << endl;
 }
 
-void CharBase::lvlUp()
+void Player::lvlUp()
 {
-		
+	while( xp >= lvl )
+	{
+		cout << name << " has leveled up!" << endl;
+		xp = xp - lvl;
+		lvl = lvl + 1;
+		hp = hp + 2;
+		atk = atk + 1;
+		def = def + 1;
+	}
 }
