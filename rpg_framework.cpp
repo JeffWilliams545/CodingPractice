@@ -11,11 +11,12 @@ int main( int argc, char* argv[] )
 	GameEngine rpg;
 	Player jeff;
 	jeff.load( string( "Jeff" ), 10, 2, 1, 1, 0, string( "Get rekt." ), string( "Oof owch owie my bones." ) );
-	Enemy ruby;
-	ruby.load( string( "Ruby" ), 5, 2, 1, 1, 1, string( "Bark. Ball?" ), string( "AwhoooOOoooOOoooOo!" ) );
 	rpg.addPlayer( jeff );
+	Enemy ruby;
+	ruby.load( string( "Ruby" ), 5, 1, 1, 1, 1, string ( "Bark!" ), string( "Woof." ) );
 	rpg.addEnemy( ruby );
 	rpg.combat( jeff, ruby );
+	rpg.menu();
 	return 1;
 }
 
@@ -59,12 +60,61 @@ void GameEngine::combat( Player &primary, Enemy &secondary )
   	}	
   	return;
 }
+void GameEngine::menu()
+{
+	// menuIndex used for switch statement
+	// validInput used to check for valid user input
+	// userGuess and randNumber used for the silly game (random number generation guessing)
+	int menuIndex, userGuess, randNumber;
+	bool validInput;
+
+	// Printing menu to terminal
+	cout << "-----------------------------------------------" << endl;
+	cout << "Welcome to the menu." << endl << endl;
+	cout << "Please select from the following options." << endl << endl;
+	cout << "1 - See a picture of a rose." << endl;
+	cout << "2 - Play a silly game." << endl;
+	cout << "0 - Exit program." << endl;
+	cout << "-----------------------------------------------" << endl;
+
+	// Input from user
+	validInput = false;
+	while( !validInput )
+	{
+		cin >> menuIndex;
+		if( menuIndex > 2 || menuIndex < 0 )
+		{
+			cout << endl << "invalid input. Please try again." << endl;
+		}
+		else
+		{
+			validInput = true;
+		}
+	}
+
+	// Switch statement for menu options
+	switch ( menuIndex )
+	{
+		// Case of silly game using random number generation
+		case 2:
+		{
+			cout << endl << "Guess the number I am thinking of between 1 and 10" << endl;
+			randNumber = (rand() % 10) + 1;
+			cin >> userGuess;
+			if( randNumber == userGuess )
+				cout << endl << "You won! Please pat yourself on your back." << endl << endl;
+			else
+				cout << endl << "You lost. Better luck next time!" << endl << endl;
+			usleep(2000000);
+			menu();
+		}
+	}
+}
 
 int GameEngine::generateRandomInt( int high )
 {
 	return ( rand() % high ) + 1;
 }
-
 
 void CharBase::setHP( int hp )
 {
@@ -170,7 +220,7 @@ void Player::victory( Enemy &enemy )
 {
 	cout << name << " has defeated " << enemy.getName() << '!' << endl;
 	cout << name << ": " << victoryQuote << endl;
-	cout << enemy.getName() << ": " << defeatQuote << endl;
+	cout << enemy.getName() << ": " << enemy.getDefeatQuote() << endl;
 	setXP( getXP() + enemy.getXP() );
 	lvlUp();
 }

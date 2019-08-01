@@ -30,7 +30,7 @@ menu: menu.cpp
 tweakLetters: tweakLetters.cpp
 	$(CC) $(CFLAGS) $? $(LDFLAGS) -o $@
 
-rpg_framework: rpg_framework.cpp rpg_framework.h
+rpg_framework: rpg_framework.cpp menu.cpp rpg_framework.h
 	$(CC) $(CFLAGS) $? $(LDFLAGS) -o $@
 
 clean:

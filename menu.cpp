@@ -9,14 +9,6 @@
 
 using namespace std;
 
-void menu();
-
-int main( int argc, char* argv[] )
-{
-	menu();
-	return 1;
-}
-
 void menu()
 {
 	// menuIndex used for switch statement

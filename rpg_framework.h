@@ -3,6 +3,7 @@
 #include <vector>	// For vector usage and avoiding having to use pointers and arrays
 #include <ctime>	// For time()
 #include <cstdlib>	// For srand() and rand() 
+#include <unistd.h>	// For usleep( microseconds ) to add delay
 
 class CharBase;
 class Player;
@@ -19,6 +20,7 @@ class GameEngine
 		void addPlayer( Player &player );
 		void addEnemy( Enemy &enemy );
 		void combat( Player &primary, Enemy &secondary );
+		void menu();
 };
 
 class CharBase
