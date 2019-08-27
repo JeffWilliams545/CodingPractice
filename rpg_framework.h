@@ -14,12 +14,15 @@ class GameEngine
 	private:
 		std::vector<Player> playerList;
 		std::vector<Enemy> enemyList;
-		void attack( Player &primary, Enemy &secondary );
+		void attack( Player &player, Enemy &enemy );
 		int generateRandomInt( int high );
+		void encounter();
+		void toughEncounter();
+		void camp();
 	public:
 		void addPlayer( Player &player );
 		void addEnemy( Enemy &enemy );
-		void combat( Player &primary, Enemy &secondary );
+		void combat( Player &player, Enemy &enemy );
 		void menu();
 };
 
@@ -61,5 +64,6 @@ class Player: public CharBase
 
 class Enemy: public CharBase
 {
-
+	public:
+		Enemy( std::string name, int lvl );		
 };

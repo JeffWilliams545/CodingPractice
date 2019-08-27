@@ -12,8 +12,7 @@ int main( int argc, char* argv[] )
 	Player jeff;
 	jeff.load( string( "Jeff" ), 10, 2, 1, 1, 0, string( "Get rekt." ), string( "Oof owch owie my bones." ) );
 	rpg.addPlayer( jeff );
-	Enemy ruby;
-	ruby.load( string( "Ruby" ), 5, 1, 1, 1, 1, string ( "Bark!" ), string( "Woof." ) );
+	Enemy ruby( "Ruby", 1 );	
 	rpg.addEnemy( ruby );
 	rpg.combat( jeff, ruby );
 	rpg.menu();
@@ -30,51 +29,52 @@ void GameEngine::addEnemy( Enemy &enemy )
 	enemyList.push_back( enemy );
 }
 
-void GameEngine::attack( Player &primary, Enemy &secondary )
+void GameEngine::attack( Player &player, Enemy &enemy )
 {
-	if( primary.isDead() )
+	if( player.isDead() )
 	{
-		primary.defeat( secondary );
+		player.defeat( enemy );
 		return;
 	}	
-	int dmg = max( 1, primary.getAtk() - secondary.getDef() );
-	secondary.setHP( secondary.getHP() - dmg );
-	cout << primary.getName() << " attacked " << secondary.getName() << " and dealt " << dmg << " damage!" << endl;
-	if ( secondary.isDead() )
+	int dmg = max( 1, player.getAtk() - enemy.getDef() );
+	enemy.setHP( enemy.getHP() - dmg );
+	cout << player.getName() << " attacked " << enemy.getName() << " and dealt " << dmg << " damage!" << endl;
+	if ( enemy.isDead() )
 	{	
-		primary.victory( secondary );
+		player.victory( enemy );
 		return;
 	}
-	dmg = max( 1, secondary.getAtk() - primary.getDef() );
-	primary.setHP( primary.getHP() - dmg );
-	cout << secondary.getName() << " attacked " << primary.getName() << " and dealt " << dmg << " damage!" << endl;
+	dmg = max( 1, enemy.getAtk() - player.getDef() );
+	player.setHP( player.getHP() - dmg );
+	cout << enemy.getName() << " attacked " << player.getName() << " and dealt " << dmg << " damage!" << endl;
 }
 
-void GameEngine::combat( Player &primary, Enemy &secondary )
+void GameEngine::combat( Player &player, Enemy &enemy )
 {
   	int turnCount = 0;
-  	while ( !primary.isDead() && !secondary.isDead() )
+  	while ( !player.isDead() && !enemy.isDead() )
   	{
-    		attack( primary, secondary );
+    		attack( player, enemy );
     		turnCount++;
   	}	
   	return;
 }
+
 void GameEngine::menu()
 {
 	// menuIndex used for switch statement
 	// validInput used to check for valid user input
-	// userGuess and randNumber used for the silly game (random number generation guessing)
-	int menuIndex, userGuess, randNumber;
+	int menuIndex;
 	bool validInput;
 
 	// Printing menu to terminal
 	cout << "-----------------------------------------------" << endl;
-	cout << "Welcome to the menu." << endl << endl;
+	cout << "Welcome to Cave." << endl << endl;
 	cout << "Please select from the following options." << endl << endl;
-	cout << "1 - See a picture of a rose." << endl;
-	cout << "2 - Play a silly game." << endl;
-	cout << "0 - Exit program." << endl;
+	cout << "1 - Fight an enemy" << endl;
+	cout << "2 - Fight a tough enemy" << endl;
+	cout << "3 - Make camp for the night." << endl;
+	cout << "0 - Exit Cave." << endl;
 	cout << "-----------------------------------------------" << endl;
 
 	// Input from user
@@ -82,7 +82,7 @@ void GameEngine::menu()
 	while( !validInput )
 	{
 		cin >> menuIndex;
-		if( menuIndex > 2 || menuIndex < 0 )
+		if( menuIndex > 3 || menuIndex < 0 )
 		{
 			cout << endl << "invalid input. Please try again." << endl;
 		}
@@ -95,25 +95,48 @@ void GameEngine::menu()
 	// Switch statement for menu options
 	switch ( menuIndex )
 	{
-		// Case of silly game using random number generation
+		case 1:
+		{
+			encounter();
+			break;
+		}
 		case 2:
 		{
-			cout << endl << "Guess the number I am thinking of between 1 and 10" << endl;
-			randNumber = (rand() % 10) + 1;
-			cin >> userGuess;
-			if( randNumber == userGuess )
-				cout << endl << "You won! Please pat yourself on your back." << endl << endl;
-			else
-				cout << endl << "You lost. Better luck next time!" << endl << endl;
-			usleep(2000000);
-			menu();
+			toughEncounter();
+			break;
 		}
-	}
+		case 3:
+		{
+			camp();
+			break;
+		}
+		case 0:
+		{
+			break;
+		}	
+	}	
 }
 
 int GameEngine::generateRandomInt( int high )
 {
 	return ( rand() % high ) + 1;
+}
+
+void GameEngine::encounter()
+{
+	cout << "encounter" << endl;
+	menu();
+}
+
+void GameEngine::toughEncounter()
+{
+	cout << "toughEncounter" << endl;
+	menu();
+}
+void GameEngine::camp()
+{
+	cout << "camp" << endl;
+	menu();
 }
 
 void CharBase::setHP( int hp )
@@ -243,4 +266,9 @@ void Player::lvlUp()
 		atk = atk + 1;
 		def = def + 1;
 	}
+}
+
+Enemy::Enemy( string name, int lvl )
+{
+	load( name, 5 * lvl, 2 * lvl, 1 * lvl, lvl, lvl, string( "default" ), string( "default" ) );
 }
